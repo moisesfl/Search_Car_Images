@@ -2,49 +2,44 @@ import os
 import shutil
 import pandas as pd
 
-
 rootPath = os.getcwd()
-print(f'Directorio raíz: {rootPath}')
-imagesRootPath = "C:/CIA/proba/"
-
+print(f'Directorio raíz: {rootPath}/n')
+imagesRootPath = "../Vehicles/" 
 
 def searchImages(excelListSEMCar):
+    # np array to list
     excelListSEMCar = list(excelListSEMCar)
+    # We go through all the directories
     for dayFolderName in os.listdir(imagesRootPath):
         dayFolderPath = imagesRootPath + dayFolderName
+        print(f"Looking in the folder {dayFolderName}...")
         for carFolderName in os.listdir(dayFolderPath):
             carFolderPath = f"{dayFolderPath}/{carFolderName}"
             tempList = carFolderName.split("_")
             semFolder = tempList[1]
-
-            semFolderWithCero = semFolder[:5] + "0" + semFolder[5:]
-            print(semFolder)
-            if (int(semFolderWithCero) in excelListSEMCar):
-                print(f"Encontrado SEM: {semFolder}")
-                # copiar carpeta e eliminar da lista excelListSEMCar
+            # The list of NORES in excel has one more zero
+            semFolderWithZero = semFolder[:5] + "0" + semFolder[5:]
+            if (int(semFolderWithZero) in excelListSEMCar):
+                # copy folder
                 pathToCopy = f"{rootPath}/./MivieCars/{carFolderName}"
                 if not (os.path.exists(pathToCopy)):
-                    shutil.copytree(f"{carFolderPath}",
-                                    pathToCopy)
-                    # delete element array
-                    # no doy eliminado el elemento correspondiente
-                    excelListSEMCar.remove(int(semFolderWithCero))
-
+                    shutil.copytree(f"{carFolderPath}", pathToCopy)
+                    # delete element list
+                    excelListSEMCar.remove(int(semFolderWithZero))
+                    print (f"   Mivie car with SEM {semFolder} found!")
                 else:
-                    print("No copiado!Ya existe la carpeta!")
+                    print(f"    SEM {semFolder} not copied! The folder already exists!")
                     continue
-            print(carFolderPath + "  SEM:" + tempList[1])
 
-    for VIScar in excelListSEMCar:
-        print(VIScar)
+    print ("Finished car search!")
+    input();
+    # for VIScar in excelListSEMCar:
+    #     print(VIScar)
 
 
-# Definimos una lista con las columnas que queremos leer
+# We define a list with the columns we want to read
 useCols = ['VIS', 'SEM']
-df = pd.read_excel('App_test/Listado K9 mivie.xls', usecols=useCols)
-# # print (df)
-# lista = list[df]
-# # for car in df['VIS'].values:
-# #     print (car)
-# Pasamos como argumemto la lista de valores de la columna SEM
+df = pd.read_excel('Listado K9 mivie.xls', usecols=useCols)
+
+# We pass as argument the list of values of the SEM column
 searchImages(df['SEM'].values)
