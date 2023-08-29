@@ -1,17 +1,32 @@
 import os
 import shutil
 import pandas as pd
+import json
 
+configFilePath = "./config.json"
 rootPath = os.getcwd()
 print(f'Directorio raíz: {rootPath}/n')
-imagesRootPath = "../Vehicles/" 
+#imagesRootPath = "../Vehicles/" 
 
-def searchImages(excelListSEMCar):
+def readJSON (JSONFile):
+    # Opening JSON file
+    f = open(JSONFile)
+    
+    # returns JSON object as
+    # a dictionary
+    data = json.load(f)
+
+    
+    # Closing file
+    f.close()
+    return data["inputPath"]
+
+def searchImages(excelListSEMCar, inputPath = "../Vehicles"):
     # np array to list
     excelListSEMCar = list(excelListSEMCar)
     # We go through all the directories
-    for dayFolderName in os.listdir(imagesRootPath):
-        dayFolderPath = imagesRootPath + dayFolderName
+    for dayFolderName in os.listdir(inputPath):
+        dayFolderPath = inputPath + dayFolderName
         print(f"Looking in the folder {dayFolderName}...")
         for carFolderName in os.listdir(dayFolderPath):
             carFolderPath = f"{dayFolderPath}/{carFolderName}"
@@ -32,14 +47,16 @@ def searchImages(excelListSEMCar):
                     continue
 
     print ("Finished car search!")
-    input();
+    
     # for VIScar in excelListSEMCar:
     #     print(VIScar)
 
-
+inputPath= readJSON(configFilePath)
 # We define a list with the columns we want to read
 useCols = ['VIS', 'SEM']
 df = pd.read_excel('Listado K9 mivie.xls', usecols=useCols)
 
 # We pass as argument the list of values of the SEM column
-searchImages(df['SEM'].values)
+searchImages(df['SEM'].values, inputPath)
+print("Finish script!")
+input();
