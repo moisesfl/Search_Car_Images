@@ -5,7 +5,7 @@ import json
 
 configFilePath = "./config.json"
 rootPath = os.getcwd()
-print(f'Directorio raíz: {rootPath}/n')
+print(f'Directorio raíz: {rootPath}')
 #imagesRootPath = "../Vehicles/" 
 
 def readJSON (JSONFile):
@@ -51,12 +51,18 @@ def searchImages(excelListSEMCar, inputPath = "../Vehicles"):
     # for VIScar in excelListSEMCar:
     #     print(VIScar)
 
-inputPath= readJSON(configFilePath)
-# We define a list with the columns we want to read
-useCols = ['VIS', 'SEM']
-df = pd.read_excel('Listado K9 mivie.xls', usecols=useCols)
+try:
+    inputPath= readJSON(configFilePath)
+    # We define a list with the columns we want to read
+    useCols = ['VIS', 'SEM']
+    df = pd.read_excel('Listado K9 mivie.xls', usecols=useCols)
 
-# We pass as argument the list of values of the SEM column
-searchImages(df['SEM'].values, inputPath)
-print("Finish script!")
+    # We pass as argument the list of values of the SEM column
+    searchImages(df['SEM'].values, inputPath)
+    print("Finish script!")
+    
+    
+except Exception as e:
+    print("Error: " , e)
+
 input();
